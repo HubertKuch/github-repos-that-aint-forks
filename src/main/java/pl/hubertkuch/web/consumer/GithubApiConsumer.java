@@ -29,7 +29,8 @@ public class GithubApiConsumer extends HttpConsumer {
         try {
             var reposHttpEntity = restTemplate.getForEntity(buildReposUrl(owner), GithubRawRepo[].class);
 
-            if (!reposHttpEntity.getStatusCode().equals(HttpStatus.NOT_FOUND) || reposHttpEntity.getBody() == null) {
+            if (!reposHttpEntity.getStatusCode().is2xxSuccessful() || reposHttpEntity.getBody() == null) {
+                System.out.println(reposHttpEntity.getStatusCode());
                 throw new GithubRepoException("Owner not found");
             }
 
@@ -55,10 +56,10 @@ public class GithubApiConsumer extends HttpConsumer {
     }
 
     private String buildReposUrl(String owner) {
-        return BASE + "/%s/repos".formatted(owner);
+        return BASE + "/users/%s/repos".formatted(owner);
     }
 
     private String buildBranchesUrl(String owner, String repo) {
-        return BASE + "/%s/%s/branches".formatted(owner, repo);
+        return BASE + "/repos/%s/%s/branches".formatted(owner, repo);
     }
 }
